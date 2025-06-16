@@ -425,16 +425,21 @@ class MemoryGame {
     }
     
     handleMatch(card1, card2) {
+        // マッチ状態を設定
         card1.isMatched = true;
         card2.isMatched = true;
-        card1.isFlipped = true; // 確実に表状態を維持
-        card2.isFlipped = true; // 確実に表状態を維持
+        card1.isFlipped = true; // 表状態を維持
+        card2.isFlipped = true; // 表状態を維持
         
-        // CSSクラスを追加
+        // マッチしたカードのスタイルを適用
         card1.element.classList.add('matched');
         card2.element.classList.add('matched');
+        
+        // 確実に表（アイコン）側を表示
         card1.element.classList.add('flipped');
         card2.element.classList.add('flipped');
+        
+        console.log(`マッチ成功: ${card1.service.name}`);
         
         this.matchedPairs++;
         this.score += 100;
