@@ -394,6 +394,9 @@ class MemoryGame {
     }
     
     unflipCard(card) {
+        // マッチしたカードは裏返さない
+        if (card.isMatched) return;
+        
         card.isFlipped = false;
         card.element.classList.remove('flipped');
     }
@@ -424,10 +427,12 @@ class MemoryGame {
     handleMatch(card1, card2) {
         card1.isMatched = true;
         card2.isMatched = true;
+        card1.isFlipped = true; // 確実に表状態を維持
+        card2.isFlipped = true; // 確実に表状態を維持
+        
+        // CSSクラスを追加
         card1.element.classList.add('matched');
         card2.element.classList.add('matched');
-        
-        // マッチしたカードは表のままにする（flippedクラスを維持）
         card1.element.classList.add('flipped');
         card2.element.classList.add('flipped');
         

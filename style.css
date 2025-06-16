@@ -131,13 +131,13 @@ select {
 
 .card.matched {
     background: linear-gradient(145deg, #4ECDC4, #44A08D);
-    transform: scale(0.95);
+    transform: scale(0.95) rotateY(180deg) !important;
     opacity: 0.9;
     border: 2px solid #2ECC71;
 }
 
 .card.matched:hover {
-    transform: scale(0.95);
+    transform: scale(0.95) rotateY(180deg) !important;
 }
 
 .card.matched .card-back {
