@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS サービスアイコン神経衰弱</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AWS サービスアイコン神経衰弱</h1>
+            <div class="game-info">
+                <div class="score">
+                    <span>スコア: <span id="score">0</span></span>
+                    <span>試行回数: <span id="attempts">0</span></span>
+                    <span>マッチ: <span id="matches">0</span> / <span id="total-pairs">0</span></span>
+                </div>
+                <div class="controls">
+                    <button id="new-game-btn">新しいゲーム</button>
+                    <select id="difficulty">
+                        <option value="easy">簡単 (4×3)</option>
+                        <option value="medium" selected>普通 (4×4)</option>
+                        <option value="hard">難しい (6×4)</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+        
+        <main>
+            <div id="game-board" class="game-board"></div>
+            <div id="game-complete" class="game-complete hidden">
+                <h2>おめでとうございます！</h2>
+                <p>ゲームクリア！</p>
+                <p>スコア: <span id="final-score"></span></p>
+                <p>試行回数: <span id="final-attempts"></span></p>
+                <button id="play-again-btn">もう一度プレイ</button>
+            </div>
+        </main>
+        
+        <!-- サービス情報ポップアップ -->
+        <div id="service-popup" class="service-popup hidden">
+            <div class="popup-content">
+                <button class="popup-close" id="popup-close">&times;</button>
+                <div class="popup-header">
+                    <img id="popup-icon" src="" alt="">
+                    <h3 id="popup-title"></h3>
+                </div>
+                <div class="popup-body">
+                    <p><strong>カテゴリ:</strong> <span id="popup-category"></span></p>
+                    <p><strong>概要:</strong></p>
+                    <p id="popup-description"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

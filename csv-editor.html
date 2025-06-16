@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS サービス情報エディタ</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .editor-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+        }
+        
+        .csv-output {
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .service-list {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .service-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        .service-item h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .service-item p {
+            margin: 5px 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AWS サービス情報エディタ</h1>
+        
+        <div class="instructions">
+            <h3>使用方法</h3>
+            <p>1. 下記のフォームでAWSサービス情報を追加・編集できます</p>
+            <p>2. 「CSVを生成」ボタンでCSV形式のデータを生成します</p>
+            <p>3. 生成されたCSVデータをコピーして「aws-services.csv」ファイルに保存してください</p>
+        </div>
+        
+        <div class="editor-section">
+            <h2>新しいサービスを追加</h2>
+            <div class="form-group">
+                <label for="service-name">サービス名:</label>
+                <input type="text" id="service-name" placeholder="例: Amazon EC2">
+            </div>
+            
+            <div class="form-group">
+                <label for="service-category">カテゴリ:</label>
+                <select id="service-category">
+                    <option value="Compute">Compute</option>
+                    <option value="Storage">Storage</option>
+                    <option value="Database">Database</option>
+                    <option value="Networking">Networking</option>
+                    <option value="Analytics">Analytics</option>
+                    <option value="Security">Security</option>
+                    <option value="Management">Management</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="service-icon">アイコンパス:</label>
+                <input type="text" id="service-icon" placeholder="例: Architecture-Service-Icons_02072025/Arch_Compute/64/Arch_Amazon-EC2_64.png">
+            </div>
+            
+            <div class="form-group">
+                <label for="service-description">サービス概要:</label>
+                <textarea id="service-description" placeholder="サービスの概要を入力してください..."></textarea>
+            </div>
+            
+            <button onclick="addService()">サービスを追加</button>
+            <button onclick="clearForm()">フォームをクリア</button>
+        </div>
+        
+        <div class="editor-section">
+            <h2>現在のサービス一覧</h2>
+            <div id="service-list" class="service-list"></div>
+        </div>
+        
+        <div class="editor-section">
+            <h2>CSV出力</h2>
+            <button onclick="generateCSV()">CSVを生成</button>
+            <button onclick="copyCSV()">CSVをコピー</button>
+            <button onclick="loadCurrentCSV()">現在のCSVを読み込み</button>
+            <div id="csv-output" class="csv-output"></div>
+        </div>
+    </div>
+    
+    <script>
+        let services = [];
+        
+        function addService() {
+            const name = document.getElementById('service-name').value.trim();
+            const category = document.getElementById('service-category').value;
+            const icon = document.getElementById('service-icon').value.trim();
+            const description = document.getElementById('service-description').value.trim();
+            
+            if (!name || !icon || !description) {
+                alert('すべてのフィールドを入力してください。');
+                return;
+            }
+            
+            services.push({ name, category, icon, description });
+            updateServiceList();
+            clearForm();
+        }
+        
+        function clearForm() {
+            document.getElementById('service-name').value = '';
+            document.getElementById('service-icon').value = '';
+            document.getElementById('service-description').value = '';
+        }
+        
+        function updateServiceList() {
+            const listElement = document.getElementById('service-list');
+            listElement.innerHTML = '';
+            
+            services.forEach((service, index) => {
+                const serviceDiv = document.createElement('div');
+                serviceDiv.className = 'service-item';
+                serviceDiv.innerHTML = `
+                    <h3>${service.name}</h3>
+                    <p><strong>カテゴリ:</strong> ${service.category}</p>
+                    <p><strong>アイコン:</strong> ${service.icon}</p>
+                    <p><strong>概要:</strong> ${service.description}</p>
+                    <button onclick="removeService(${index})" style="background: #ff4444;">削除</button>
+                `;
+                listElement.appendChild(serviceDiv);
+            });
+        }
+        
+        function removeService(index) {
+            if (confirm('このサービスを削除しますか？')) {
+                services.splice(index, 1);
+                updateServiceList();
+            }
+        }
+        
+        function generateCSV() {
+            let csv = 'name,category,icon,description\n';
+            
+            services.forEach(service => {
+                const escapedDescription = `"${service.description.replace(/"/g, '""')}"`;
+                csv += `${service.name},${service.category},${service.icon},${escapedDescription}\n`;
+            });
+            
+            document.getElementById('csv-output').textContent = csv;
+        }
+        
+        function copyCSV() {
+            const csvText = document.getElementById('csv-output').textContent;
+            if (!csvText) {
+                alert('まずCSVを生成してください。');
+                return;
+            }
+            
+            navigator.clipboard.writeText(csvText).then(() => {
+                alert('CSVデータがクリップボードにコピーされました！');
+            }).catch(err => {
+                console.error('コピーに失敗しました:', err);
+                alert('コピーに失敗しました。手動でテキストを選択してコピーしてください。');
+            });
+        }
+        
+        async function loadCurrentCSV() {
+            try {
+                const response = await fetch('aws-services.csv');
+                const csvText = await response.text();
+                
+                // CSVをパース
+                const lines = csvText.trim().split('\n');
+                const headers = lines[0].split(',');
+                services = [];
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const values = parseCSVLine(lines[i]);
+                    if (values.length === headers.length) {
+                        const service = {};
+                        headers.forEach((header, index) => {
+                            service[header.trim()] = values[index].trim().replace(/^"|"$/g, '');
+                        });
+                        services.push(service);
+                    }
+                }
+                
+                updateServiceList();
+                alert('現在のCSVファイルを読み込みました。');
+            } catch (error) {
+                console.error('CSVファイルの読み込みに失敗しました:', error);
+                alert('CSVファイルの読み込みに失敗しました。');
+            }
+        }
+        
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            
+            result.push(current);
+            return result;
+        }
+        
+        // ページ読み込み時に現在のCSVを読み込み
+        window.addEventListener('load', loadCurrentCSV);
+    </script>
+</body>
+</html>
