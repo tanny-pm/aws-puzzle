@@ -427,6 +427,10 @@ class MemoryGame {
         card1.element.classList.add('matched');
         card2.element.classList.add('matched');
         
+        // マッチしたカードは表のままにする（flippedクラスを維持）
+        card1.element.classList.add('flipped');
+        card2.element.classList.add('flipped');
+        
         this.matchedPairs++;
         this.score += 100;
         this.updateUI();
