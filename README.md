@@ -117,7 +117,7 @@ Amazon EC2,Compute,Architecture-Service-Icons_02072025/Arch_Compute/64/Arch_Amaz
 - `script.js` - ゲームロジック
 - `aws-services.csv` - サービス情報データ
 - `csv-editor.html` - サービス情報編集ツール
-- `Architecture-Service-Icons_02072025/` - AWSアイコンディレクトリ
+- `aws-icons/` - 必要なAWSアイコン（64px）
 
 ## 📄 ライセンス
 
