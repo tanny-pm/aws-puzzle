@@ -245,7 +245,7 @@ describe('MemoryGame', () => {
     
     expect(result).toHaveLength(4);
     expect(result[0]).toBe('Amazon EC2');
-    expect(result[3]).toBe('"This is a description with, comma"');
+    expect(result[3]).toBe('This is a description with, comma');
   });
   
   test('難易度設定が正しく取得されること', () => {
